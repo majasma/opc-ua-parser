@@ -2,7 +2,6 @@
 This repository contains all code used for planning, implementation and testing. 
 
 ## Diagrams
----
 Diagrams are used to illustrate the use case and plan implementation. 
 The directory contains:
 - Network architecture
@@ -10,10 +9,8 @@ The directory contains:
 - Process drawing with PLC info lines
 
 ## Implementation
----
 
 ## Testing
----
 The test environment is set up using a Python script acting as a OPC-UA server. The server represents the PLC which receives input from the flare system. The client is implemented using UaExpert. Wireshark is used to capture packets. 
 
 How to run the environment:
