@@ -18,13 +18,25 @@ idx = server.register_namespace(uri)
 node = server.nodes.objects.add_object(idx, "Parameters")
 
 # create variables
-temp_var = node.add_variable(idx, "Temp", 0.0)
+lt_var = node.add_variable(idx, "Level Transmitter", 0.0)
+rp_var = node.add_variable(idx, "Return Pumps", 0.0)
+ls_var = node.add_variable(idx, "Level Switch", 0)
+bdv_var = node.add_variavle(idx, "BDV", 0)
+prv_var = node.add_variavle(idx, "PRV", 0)
+dsv_var = node.add_variavle(idx, "Drain System Valve", 0)
+flare_var = node.add_variavle(idx, "Flare Ignition", 0)
 
 
 # make variables writable
-temp_var.set_writable()
+lt_var.set_writable()
+rp_var.set_writable()
+ls_var.set_writable()
+bdv_var.set_writable()
+prv_var.set_writable()
+dsv_var.set_writable()
+flare_var.set_writable()
 
-# --------------------------------------- WHAT IS THIS --------------------------
+# --------------------------------------- NOT SURE IF THIS IS NESESSARY --------------------------
 
 
 # create a new object type for the temperature sensor
@@ -38,15 +50,33 @@ sensor_node = server.nodes.objects.add_object(idx, "TemperatureSensor", sensor_t
 
 # -------------------------------------- START SERVER ------------------------------------------
 server.start()
+print("Server started at {}".format(url))
 
 while True:
     # update temperature every second
-    temp = uv.update_temperature()
-    temp_var.set_value(temp)
+    lt = uv.update_lt()
+    rp = uv.update_rp()
+    ls = uv.update_ls()
+    bdv = uv.update_bdv()
+    prv = uv.update_prv()
+    dsv = uv.update_dsv()
+    flare = uv.update_flare()
 
+    var_arr = [lt, rp, ls, bdv, prv, prv, dsv, flare]
+
+
+    lt_var.set_value(lt)
+    rp_var.set_value(rp)
+    ls_var.set_value(ls)
+    bdv_var.set_value(bdv)
+    prv_var.set_value(prv)
+    dsv_var.set_value(dsv)
+    flare_var.set_value(flare)
+    
+    
     time_var = datetime.datetime.now()
 
-    print(temp, time_var)
+    print(var_arr, time_var)
     time.sleep(1)
 
 
