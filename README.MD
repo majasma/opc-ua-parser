@@ -25,3 +25,11 @@ How to run the environment:
 Current issues:
  - [ ] Currently communication is encrypted 
  - [ ] Unsure how to incorporate Ethernet-APL
+
+
+
+## 28/3
+- restructure the code to set the writable in the function and give it the required input. 
+- start pesudocoding a normal operations scenario and one attack scenario
+
+TODO:Lacking preassure measurements, is that realistic? Would need them to easily detect preassure increase or differences. 
