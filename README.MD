@@ -23,13 +23,15 @@ How to run the environment:
     4. In the "Interface Options" window, enter **`port 4840`** or **`opcua`** in the "Capture filter" field.
 
 Current issues:
- - [ ] Currently communication is encrypted 
- - [ ] Unsure how to incorporate Ethernet-APL
+ - [ ] Unsure how to incorporate Ethernet-APL (edit: dont think this is possible as physical layer is not represented in the dataset)
 
 
 
-## 28/3
+### 28/3
 - restructure the code to set the writable in the function and give it the required input. 
 - start pesudocoding a normal operations scenario and one attack scenario
 
-TODO:Lacking preassure measurements, is that realistic? Would need them to easily detect preassure increase or differences. 
+### 19/4
+- finished implementing PRV and BDV scenarios, both need some fixing up after consultation but mostly minor issues
+- started the attack scenario but here are issues with representation
+- implemented file export of values to csv file
