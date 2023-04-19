@@ -9,8 +9,6 @@ from datetime import datetime
 import time
 import random 
 
-# TODO export to csv file
-
 def main():
     #--------------------------------------INIT--------------------------------------------
     # create server
@@ -40,8 +38,6 @@ def main():
     prv = 0.0
     temp = 14
 
-
-
     # make variables writable
     lt_var.set_writable()
     rp_var.set_writable()
@@ -60,6 +56,7 @@ def main():
     # TODO include temperature consideration
 
     print("Large relief scenario started")
+    f = open("PRV_scenario.csv", "a")
     prv = 70
     timing = 0
 
@@ -80,21 +77,32 @@ def main():
         else: 
             prv = random.randint(65, 75)
 
+        # end scenario when prv closed and tank is empty
+        if (prv == 0 and lt <= 0):
+            lt = 0
+            rp = 0
+
+            lt_var.set_value(lt)
+            rp_var.set_value(rp)
+            ls_var.set_value(ls)
+            bdv_var.set_value(bdv)
+            prv_var.set_value(prv)
+            temp_var.set_value(temp)
+
+            print(datetime.now().replace(microsecond=0), "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp)
+            f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
+            break
+
         # set server values
-        lt_var.set_value(lt)
+        lt_var.set_value(round(lt,2))
         rp_var.set_value(rp)
         ls_var.set_value(ls)
         bdv_var.set_value(bdv)
         prv_var.set_value(prv)
         temp_var.set_value(temp)
 
-        print(datetime.now(), "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp)
-
-        # end scenario when prv closed and tank is empty
-        if (prv == 0 and lt <= 0):
-            lt = 0
-            rp = 0
-            break
+        print(datetime.now().replace(microsecond=0), "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp)
+        f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
 
         time.sleep(1) 
         timing += 1
@@ -102,14 +110,8 @@ def main():
     print("Large relief scenario complete")    
 
     # small relief
-        # PRV open a little
-        # tank level increases
-        # prv closes
-        # temperature increases
-        # level decreases
-        # Level 0
-        # temperature increases
-    
+
+    print("\n")
     print("Small relief scenario started")
     prv = 30
     timing = 0
@@ -123,46 +125,51 @@ def main():
         else: 
             prv = random.randint(27, 36)
 
-        # TODO find realistic numbers for how high the temp must be to evaporate oil to gas
+        # TODO as abour this
         if lt >= 10:
-            if temp < 70:
+            if temp < 150:
                 temp += 7
         
         # decrease level in tank when the temperature is high enough
-        if temp > 60:
-            lt -= 0.4*temp
+        if temp > 150:
+            lt -= 0.02*temp
 
         # operators remove heating when there is no liquid, temp change have high delay
-        if lt == 0:
-            temp -= 4
+        if lt <= 0:
+            temp -= 11
+            lt = 0
 
         #exit scenario when prv closed, tank empty and temp returned to low
         if prv == 0 and temp <= 14 and lt <= 0:
             lt = 0
+
+            lt_var.set_value(round(lt,2))
+            rp_var.set_value(rp)
+            ls_var.set_value(ls)
+            bdv_var.set_value(bdv)
+            prv_var.set_value(prv)
+            temp_var.set_value(round(temp, 2))
+
+            print(datetime.now().replace(microsecond=0), "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
+            f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
             break
-        
 
-
-        # set server values
-        lt_var.set_value(lt)
+                # set server values
+        lt_var.set_value(round(lt,2))
         rp_var.set_value(rp)
         ls_var.set_value(ls)
         bdv_var.set_value(bdv)
         prv_var.set_value(prv)
-        temp_var.set_value(temp)
+        temp_var.set_value(round(temp, 2))
 
-        print(datetime.now(), "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp)
-
-        # end scenario when prv closed and tank is empty
-        if (prv == 0 and lt <= 0):
-            lt = 0
-            rp = 0
-            break
+        print(datetime.now().replace(microsecond=0), "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
+        f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + '\n') 
 
         time.sleep(1) 
         timing += 1
 
     print("Small relief scenario complete")
+    f.close()
 
     return
 
