@@ -30,6 +30,8 @@ def main():
     bdv_var = node.add_variable(idx, "BDV", 0,  varianttype=ua.VariantType.Boolean)
     prv_var = node.add_variable(idx, "PRV", 0, varianttype=ua.VariantType.Float)
     temp_var = node.add_variable(idx, "Temperature", 14, varianttype=ua.VariantType.Float)
+    drain_var = node.add_variable(idx, "Drain Valve", 0, varianttype=ua.VariantType.Boolean)
+
 
     lt = 0.0
     rp = 0.0
@@ -37,6 +39,7 @@ def main():
     bdv = 0
     prv = 0.0
     temp = 14
+    drain = 0
 
     # make variables writable
     lt_var.set_writable()
@@ -45,6 +48,7 @@ def main():
     bdv_var.set_writable()
     prv_var.set_writable()
     temp_var.set_writable()
+    drain_var.set_writable()
 
     server.start()
     print("Server started at {}".format(url))
@@ -77,6 +81,10 @@ def main():
         else: 
             prv = random.randint(65, 75)
 
+        #record timing for logging
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+
         # end scenario when prv closed and tank is empty
         if (prv == 0 and lt <= 0):
             lt = 0
@@ -88,9 +96,10 @@ def main():
             bdv_var.set_value(bdv)
             prv_var.set_value(prv)
             temp_var.set_value(temp)
+            drain_var.set_value(drain)
 
-            print(datetime.now().replace(microsecond=0), "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp)
-            f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
+            print(date_time, "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp, "drain valve: ", drain)
+            f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + ", " + repr(drain) +'\n') 
             break
 
         # set server values
@@ -100,9 +109,10 @@ def main():
         bdv_var.set_value(bdv)
         prv_var.set_value(prv)
         temp_var.set_value(temp)
+        drain_var.set_value(drain)
 
-        print(datetime.now().replace(microsecond=0), "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp)
-        f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
+        print(date_time, "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp, "drain valve: ", drain)
+        f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + ", " + repr(drain) +'\n') 
 
         time.sleep(1) 
         timing += 1
@@ -125,7 +135,7 @@ def main():
         else: 
             prv = random.randint(27, 36)
 
-        # TODO as abour this
+        # TODO ask about this
         if lt >= 10:
             if temp < 150:
                 temp += 7
@@ -139,6 +149,10 @@ def main():
             temp -= 11
             lt = 0
 
+        #record timing for logging
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+
         #exit scenario when prv closed, tank empty and temp returned to low
         if prv == 0 and temp <= 14 and lt <= 0:
             lt = 0
@@ -149,9 +163,10 @@ def main():
             bdv_var.set_value(bdv)
             prv_var.set_value(prv)
             temp_var.set_value(round(temp, 2))
+            drain_var.set_value(drain)
 
-            print(datetime.now().replace(microsecond=0), "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
-            f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
+            print(date_time, "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
+            f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
             break
 
                 # set server values
@@ -161,9 +176,10 @@ def main():
         bdv_var.set_value(bdv)
         prv_var.set_value(prv)
         temp_var.set_value(round(temp, 2))
+        drain_var.set_value(drain)
 
-        print(datetime.now().replace(microsecond=0), "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
-        f.write(repr(datetime.now().replace(microsecond=0)) + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + '\n') 
+        print(date_time, "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
+        f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + '\n') 
 
         time.sleep(1) 
         timing += 1
