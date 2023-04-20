@@ -89,7 +89,9 @@ def main():
         time.sleep(1) 
         i += 1
 
-    print("Masked attack scenario complete")  
+    print("Masked attack scenario complete") 
+    f.close() 
+    server.stop()
 
 if __name__ == "__main__":
     main()

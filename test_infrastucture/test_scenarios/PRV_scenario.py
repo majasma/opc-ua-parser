@@ -188,6 +188,7 @@ def main():
 
     print("Small relief scenario complete")
     f.close()
+    server.stop()
 
     return
 

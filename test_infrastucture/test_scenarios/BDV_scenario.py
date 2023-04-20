@@ -69,7 +69,7 @@ def main():
     #descrease level
     # TODO should esd status be added, and drain add to other scenarios
 
-    while i < 5 * 60:
+    while i < 3 * 60:
         lt += 10 * bdv
 
         if (lt >= 50): 
@@ -123,6 +123,8 @@ def main():
         i += 1
 
     print("BD relief scenario complete")  
+    f.close()
+    server.stop()
 
 if __name__ == "__main__":
     main()

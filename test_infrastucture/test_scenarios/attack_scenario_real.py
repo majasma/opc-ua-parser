@@ -110,7 +110,9 @@ def main():
         time.sleep(1) 
         i += 1
 
-    print("BD relief scenario complete")  
+    print("BD relief scenario complete") 
+    f.close() 
+    server.stop()
 
 if __name__ == "__main__":
     main()
