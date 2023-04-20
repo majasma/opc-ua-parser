@@ -29,8 +29,9 @@ def main():
     ls_var = node.add_variable(idx, "Level Switch", 0, varianttype=ua.VariantType.Boolean)
     bdv_var = node.add_variable(idx, "BDV", 0,  varianttype=ua.VariantType.Boolean)
     prv_var = node.add_variable(idx, "PRV", 0, varianttype=ua.VariantType.Float)
-    temp_var = node.add_variable(idx, "Temperature", 14, varianttype=ua.VariantType.Float)
     drain_var = node.add_variable(idx, "Drain Valve", 0, varianttype=ua.VariantType.Boolean)
+    ts_liquid_var = node.add_variable(idx, "Temperature liquids", 14, varianttype=ua.VariantType.Float)
+    ts_gas_var = node.add_variable(idx, "Temperature gas", 14, varianttype=ua.VariantType.Float)
 
 
     lt = 0.0
@@ -38,7 +39,8 @@ def main():
     ls = 0
     bdv = 0
     prv = 0.0
-    temp = 14
+    ts_liquid = 14
+    ts_gas = 0
     drain = 0
 
     # make variables writable
@@ -47,7 +49,8 @@ def main():
     ls_var.set_writable()
     bdv_var.set_writable()
     prv_var.set_writable()
-    temp_var.set_writable()
+    ts_liquid_var.set_writable()
+    ts_gas_var.set_writable()
     drain_var.set_writable()
 
     server.start()
@@ -62,9 +65,9 @@ def main():
     print("Large relief scenario started")
     f = open("PRV_scenario.csv", "a")
     prv = 70
-    timing = 0
+    i = 0
 
-    while True:
+    while i < 5* 60:
         lt += 0.1 * prv
 
         if (lt >= 50): 
@@ -76,14 +79,11 @@ def main():
         if (rp == 1):
             lt -= 7
 
-        if timing >= 10:
+        if i >= 10:
             prv = 0
         else: 
             prv = random.randint(65, 75)
 
-        #record timing for logging
-        now = datetime.now()
-        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
 
         # end scenario when prv closed and tank is empty
         if (prv == 0 and lt <= 0):
@@ -95,11 +95,12 @@ def main():
             ls_var.set_value(ls)
             bdv_var.set_value(bdv)
             prv_var.set_value(prv)
-            temp_var.set_value(temp)
+            ts_liquid_var.set_value(ts_liquid)
+            ts_gas_var.set_value(ts_gas)
             drain_var.set_value(drain)
 
-            print(date_time, "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp, "drain valve: ", drain)
-            f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + ", " + repr(drain) +'\n') 
+            print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+            f.write(repr(i) + "\t, " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
             break
 
         # set server values
@@ -108,14 +109,15 @@ def main():
         ls_var.set_value(ls)
         bdv_var.set_value(bdv)
         prv_var.set_value(prv)
-        temp_var.set_value(temp)
+        ts_liquid_var.set_value(ts_liquid)
+        ts_gas_var.set_value(ts_gas)
         drain_var.set_value(drain)
 
-        print(date_time, "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", temp, "drain valve: ", drain)
-        f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + ", " + repr(drain) +'\n') 
+        print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+        f.write(repr(i) + "\t, " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
         time.sleep(1) 
-        timing += 1
+        i += 1
 
     print("Large relief scenario complete")    
 
@@ -124,13 +126,13 @@ def main():
     print("\n")
     print("Small relief scenario started")
     prv = 30
-    timing = 0
+    i = 0
 
-    while True:
+    while i < 5 * 60:
         lt += 0.1 * prv
 
         # close valgves after x seconds
-        if timing >= 3:
+        if i >= 3:
             prv = 0
         else: 
             prv = random.randint(27, 36)
@@ -149,9 +151,6 @@ def main():
             temp -= 11
             lt = 0
 
-        #record timing for logging
-        now = datetime.now()
-        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
 
         #exit scenario when prv closed, tank empty and temp returned to low
         if prv == 0 and temp <= 14 and lt <= 0:
@@ -162,11 +161,13 @@ def main():
             ls_var.set_value(ls)
             bdv_var.set_value(bdv)
             prv_var.set_value(prv)
-            temp_var.set_value(round(temp, 2))
+            ts_liquid_var.set_value(ts_liquid)
+            ts_gas_var.set_value(ts_gas)
             drain_var.set_value(drain)
 
-            print(date_time, "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
-            f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2))+ '\n') 
+            print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+            f.write(repr(i) + "\t, " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
+            
             break
 
                 # set server values
@@ -175,14 +176,15 @@ def main():
         ls_var.set_value(ls)
         bdv_var.set_value(bdv)
         prv_var.set_value(prv)
-        temp_var.set_value(round(temp, 2))
+        ts_liquid_var.set_value(ts_liquid)
+        ts_gas_var.set_value(ts_gas)
         drain_var.set_value(drain)
 
-        print(date_time, "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp: ", round(temp, 2))
-        f.write(date_time + ", " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(temp, 2)) + '\n') 
+        print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+        f.write(repr(i) + "\t, " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
         time.sleep(1) 
-        timing += 1
+        i += 1
 
     print("Small relief scenario complete")
     f.close()
