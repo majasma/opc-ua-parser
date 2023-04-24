@@ -147,13 +147,14 @@ async def main():
                 await bdv_var.write_value(float(bdv))
                 await prv_var.write_value(float(prv))
                 await ts_liquid_var.write_value(float(ts_liquid))
-                await ts_gas_var.write_value(float(random.randint(14,16)))
+                await ts_gas_var.write_value(float(ts_gas))
                 await drain_var.write_value(float(drain))
 
                 print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "ts_liquid liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
                 f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
                 
                 break
+            
 
             # set server values
             await lt_var.write_value(float(round(lt,2)))
@@ -162,7 +163,7 @@ async def main():
             await bdv_var.write_value(float(bdv))
             await prv_var.write_value(float(prv))
             await ts_liquid_var.write_value(float(ts_liquid))
-            await ts_gas_var.write_value(float(random.randint(14,16)))
+            await ts_gas_var.write_value(float(ts_gas))
             await drain_var.write_value(float(drain))
 
             print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)

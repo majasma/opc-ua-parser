@@ -66,7 +66,6 @@ async def main():
             if (drain == 1):
                 lt -= 7
 
-            # TODO fix gas and rp logic
             if i >= 20:
                 bdv = 0
 
@@ -86,14 +85,16 @@ async def main():
                 await ls_var.write_value(float(ls))
                 await bdv_var.write_value(float(bdv))
                 await prv_var.write_value(float(prv))
-                await ts_liquid_var.write_value(float(random.randint(14,16)))
+                await ts_liquid_var.write_value(float(ts_liquid))
                 await ts_gas_var.write_value(float(ts_gas))
                 await drain_var.write_value(float(drain))
 
                 
                 f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
                 break
-
+            
+            ts_gas = random.randint(14,16)
+            ts_liquid = random.randint(14,16)
             
             # set server values
             await lt_var.write_value(float(lt))
@@ -101,14 +102,14 @@ async def main():
             await ls_var.write_value(float(ls))
             await bdv_var.write_value(float(bdv))
             await prv_var.write_value(float(prv))
-            await ts_liquid_var.write_value(float(random.randint(14,16)))
+            await ts_liquid_var.write_value(float(ts_liquid))
             await ts_gas_var.write_value(float(ts_gas))
             await drain_var.write_value(float(drain))
 
             print(i, "\t", "lt: ", float(lt), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
             f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
-            await asyncio.sleep(3)
+            await asyncio.sleep(2)
             i += 1
 
     print("BD relief scenario complete")  

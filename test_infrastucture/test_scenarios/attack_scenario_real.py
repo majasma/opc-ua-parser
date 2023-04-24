@@ -47,7 +47,7 @@ async def main():
 
 #--------------------------------------------SCENARIO START------------------------------------
     print("Unmasked attack scenario started")
-    f = open("./test_infrastructure/log_files/attack_real_scenario.csv", "a")
+    f = open("test_scenarios/log_files/attack_real_scenario.csv", "a")
     bdv = 1
     i = 0
    
@@ -67,6 +67,9 @@ async def main():
                 ls = 1
             else:
                 ls = 0
+
+            ts_gas = random.randint(14,16)
+            ts_liquid = random.randint(14,16)
             
 
             await lt_var.write_value(float(lt))
@@ -74,15 +77,15 @@ async def main():
             await ls_var.write_value(float(ls))
             await bdv_var.write_value(float(0))
             await prv_var.write_value(float(0))
-            await ts_liquid_var.write_value(float(random.randint(14,16)))
-            await ts_gas_var.write_value(float(random.randint(14,16)))
+            await ts_liquid_var.write_value(float(ts_liquid))
+            await ts_gas_var.write_value(float(ts_gas))
             await drain_var.write_value(float(0))
 
 
             print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
             f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
-            await asyncio.sleep(3) 
+            await asyncio.sleep(2) 
             i += 1
 
         print("Unmasked attack scenario complete") 
