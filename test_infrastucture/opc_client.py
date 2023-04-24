@@ -22,12 +22,13 @@ async def main():
             namespace = "flare_system"
             idx = await client.get_namespace_index(namespace)
             for i in range(len(data_variables)):
-                myvar = await client.nodes.root.get_child(["0:Objects", "{}:vPLC".format(idx), "{}:{}".format(idx,data_variables[i])])
+                myvar = await client.nodes.root.get_child(["0:Objects", "{}:PLC".format(idx), "{}:{}".format(idx,data_variables[i])])
                 val = await myvar.get_value()
                 data_list.append(val)
             # _list = data_list
             print(await dict_format(data_variables,data_list))
-            await asyncio.sleep(5)
+            
+            await asyncio.sleep(2)
 
 if __name__ == '__main__':
     asyncio.run(main())

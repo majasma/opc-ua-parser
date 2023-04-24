@@ -3,7 +3,7 @@ from asyncua import ua, Server
 from asyncua.common.methods import uamethod
 import asyncio
 import logging
-import time
+import random
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger('asyncua')
@@ -21,27 +21,25 @@ async def main():
     # create node for temperature
     node = await server.nodes.objects.add_object(idx, "PLC")
 
-    #,  varianttype=ua.VariantType.Float
-
-    # create variables
-    lt_var = await node.add_variable(idx, "Level Transmitter", 0.0)
-    rp_var = await node.add_variable(idx, "Return Pumps", 0)
-    ls_var = await node.add_variable(idx, "Level Switch", 0)
-    bdv_var = await node.add_variable(idx, "BDV", 0)
-    prv_var = await node.add_variable(idx, "PRV", 0.0)
-    drain_var = await node.add_variable(idx, "Drain Valve", 0)
-    ts_liquid_var = await node.add_variable(idx, "Temperature liquids", 14.0)
-    ts_gas_var = await node.add_variable(idx, "Temperature gas", 14.0)
-
-    # TODO change sequence of initialization of variables and setpoints
     lt = 0.0
     rp = 0.0
-    ls = 0
-    bdv = 0
+    ls = 0.0
+    bdv = 0.0
     prv = 0.0
     ts_liquid = 14.0
     ts_gas = 0.0
-    drain = 0
+    drain = 0.0
+
+    # create variables
+    lt_var = await node.add_variable(idx, "Level Transmitter", lt)
+    rp_var = await node.add_variable(idx, "Return Pumps", rp)
+    ls_var = await node.add_variable(idx, "Level Switch", ls)
+    bdv_var = await node.add_variable(idx, "BDV", bdv)
+    prv_var = await node.add_variable(idx, "PRV", prv)
+    drain_var = await node.add_variable(idx, "Drain Valve", drain)
+    ts_liquid_var = await node.add_variable(idx, "Temperature liquids", ts_liquid)
+    ts_gas_var = await node.add_variable(idx, "Temperature gas", ts_gas)
+
 
     print("Server started at {}".format(url))
     _logger.info("starting server...")
@@ -50,20 +48,14 @@ async def main():
 #--------------------------------------------SCENARIO START------------------------------------
 
     print("BD relief scenario started")
-    f = open("BDV_scenario.csv", "a")
+    f = open("test_scenarios/log_files/BDV_scenario.csv", "a")
     bdv = 1
     i = 0
 
-    #open bdv
-    #increase lt quickly
-    #close bdv
-    #turn on ls
-    #turn on drain
-    #descrease level
-    # TODO should esd status be added, and drain add to other scenarios
     async with server:
-        while i < 3 * 60:
-            lt += 10 * bdv
+        while i < 2.5 * 60:
+            lt += 4 * bdv
+            ts_gas -= 5 * bdv
 
             if (lt >= 50): 
                 ls = 1
@@ -74,47 +66,54 @@ async def main():
             if (drain == 1):
                 lt -= 7
 
-            if i >= 8:
+            # TODO fix gas and rp logic
+            if i >= 20:
                 bdv = 0
+
+                if ts_gas < 14:
+                    ts_gas += 3
             
 
-            # end scenario when prv closed and tank is efmpty
+            
+            # end scenario when prv closed and tank is empty
             if (bdv == 0 and lt <= 0):
                 lt = 0
                 drain = 0
-
-                await lt_var.write_value(round(lt,1))
-                await rp_var.write_value(rp)
-                await ls_var.write_value(ls)
-                await bdv_var.write_value(bdv)
-                await prv_var.write_value(round(prv,1))
-                await ts_liquid_var.write_value(round(ts_liquid,1))
-                await ts_gas_var.write_value(round(ts_gas,1))
-                await drain_var.write_value(drain)
-
                 print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
-                f.write(repr(i) + "\t, " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
+
+                await lt_var.write_value(float(lt))
+                await rp_var.write_value(float(rp))
+                await ls_var.write_value(float(ls))
+                await bdv_var.write_value(float(bdv))
+                await prv_var.write_value(float(prv))
+                await ts_liquid_var.write_value(float(random.randint(14,16)))
+                await ts_gas_var.write_value(float(ts_gas))
+                await drain_var.write_value(float(drain))
+
+                
+                f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
                 break
 
+            
             # set server values
-            await lt_var.write_value(round(lt,2))
-            await rp_var.write_value(rp)
-            await ls_var.write_value(ls)
-            await bdv_var.write_value(bdv)
-            await prv_var.write_value(prv)
-            await ts_liquid_var.write_value(ts_liquid)
-            await ts_gas_var.write_value(ts_gas)
-            await drain_var.write_value(drain)
+            await lt_var.write_value(float(lt))
+            await rp_var.write_value(float(rp))
+            await ls_var.write_value(float(ls))
+            await bdv_var.write_value(float(bdv))
+            await prv_var.write_value(float(prv))
+            await ts_liquid_var.write_value(float(random.randint(14,16)))
+            await ts_gas_var.write_value(float(ts_gas))
+            await drain_var.write_value(float(drain))
 
-            print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
-            f.write(repr(i) + "\t, " + repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
+            print(i, "\t", "lt: ", float(lt), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+            f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(3)
             i += 1
 
     print("BD relief scenario complete")  
     f.close()
-    server.stop()
+    await server.stop()
 
 if __name__ == "__main__":
     asyncio.run(main())
