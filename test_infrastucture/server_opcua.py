@@ -18,13 +18,13 @@ idx = server.register_namespace(uri)
 node = server.nodes.objects.add_object(idx, "Parameters")
 
 # create variables
-lt_var = node.add_variable(idx, "Level Transmitter", 0.0)
-rp_var = node.add_variable(idx, "Return Pumps", 0.0)
-ls_var = node.add_variable(idx, "Level Switch", 0)
-bdv_var = node.add_variavle(idx, "BDV", 0)
-prv_var = node.add_variavle(idx, "PRV", 0)
-dsv_var = node.add_variavle(idx, "Drain System Valve", 0)
-flare_var = node.add_variavle(idx, "Flare Ignition", 0)
+lt_var = node.add_variable(idx, "Level Transmitter", 0.0,  varianttype=ua.VariantType.Float)
+rp_var = node.add_variable(idx, "Return Pumps", 0.0,  varianttype=ua.VariantType.Float)
+ls_var = node.add_variable(idx, "Level Switch", 0, varianttype=ua.VariantType.Boolean)
+bdv_var = node.add_variable(idx, "BDV", 0,  varianttype=ua.VariantType.Boolean)
+prv_var = node.add_variable(idx, "PRV", 0, varianttype=ua.VariantType.Float)
+dsv_var = node.add_variable(idx, "Drain System Valve", 0,  varianttype=ua.VariantType.Float)
+flare_var = node.add_variable(idx, "Flare Ignition", 0, varianttype=ua.VariantType.Boolean)
 
 
 # make variables writable
@@ -43,7 +43,7 @@ flare_var.set_writable()
 sensor_type = server.nodes.base_object_type.add_object_type(idx, "TemperatureSensorType")
 
 # create method for the temperature sensor to update its value
-sensor_type.add_method(idx, "UpdateTemperature", uv.update_temperature, [], [])
+sensor_type.add_method(idx, "UpdateTemperature", uv.update_lt, [], [])
 
 # create a new instance of the temperature sensor object
 sensor_node = server.nodes.objects.add_object(idx, "TemperatureSensor", sensor_type)
