@@ -48,7 +48,7 @@ async def main():
 #--------------------------------------------LARGE RELIEF SCENARIO------------------------------------
 
     print("PR relief scenario started")
-    f = open("test_scenarios/log_files/PRV_scenario.csv", "a")
+    f = open("./log_files/PRV_scenario.csv", "a")
     prv = 70
     i = 0
 
