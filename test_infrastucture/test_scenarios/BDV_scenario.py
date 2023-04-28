@@ -48,7 +48,7 @@ async def main():
 #--------------------------------------------SCENARIO START------------------------------------
 
     print("BD relief scenario started")
-    f = open("test_scenarios/log_files/BDV_scenario.csv", "a")
+    f = open("./log_files/BDV_scenario.csv", "a")
     bdv = 1
     i = 0
 
