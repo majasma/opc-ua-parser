@@ -50,7 +50,7 @@ def control_features(df):
             print('BDV open and PRV closed, check ESD status')
         
         if df['BDV'][i] == 1 and df['Drain Valve'][i] == 0.0 and df['Return Pumps'][i] == 0.0 and df['Level Transmitter'][i] >= 50:
-            print('BDV open while RP and drain closed')
+            print('BDV open while RP/drain closed and level high')
 
         if df['Level Transmitter'][i] >= 50.0 and df['Temperature gas'][i] <= 20.0:
             print('Liquid filling but not large gas flow')

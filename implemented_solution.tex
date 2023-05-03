@@ -1,0 +1,55 @@
+\subsection{Implemented solution}
+
+The suggested solution is a packet parser analyzing the flow and content of packets
+spanned out between the different purdue levels. The parser is used as a supplement
+to the exisiting ids solution to eliminate the need for reconfiguration. 
+The parser is implemented using Python and controls the points selected in Section \ref{sec:feature_selection}.
+If the parser detects any inconsitencies in traffic flow between levels or system states 
+a notification is sent to the IDS. In that manner the IDS or SIEM remains the centralized 
+decision unit.
+
+The pcap files are read into the parser using the Pyshark package. An filter is
+applied to filter out everything but the OPC-UA pakets. The opcua traffic is then 
+flitered further to only contain read responses. These are the messages containing 
+state values. The state values are moved into a dataframe containing one column 
+for each state and one row for each connection between server and client. 
+
+This process is performed on packets from each SPAN. The result is two pcap set objects and
+two dataframes. The dataframes are compared, and if there is a mismatch, the state is
+logged and a notification sent to the decision making unit. Further on the dataframes
+are analyzed for state irregularities. These are the conditions presented in \ref{sec:feature_selection} which are 
+only dependent on the flare system and the condition "BDV open while PRV" closed as this in
+a simple mannner can be matched towards the state of the ESD system. The specific
+state checks are therefore:
+
+\begin{itemize}
+ \item BDV open and PRV closed, check ESD status
+ \item BDV open while RP/drain closed and level high
+ \item Liquid filling but not large gas flow
+\end{itemize}
+
+The pcap set object containing all the opcua traffic is also analyzed for 
+mismatches. Firstly the length of both captures are controlled. A mismatch
+in length would indicate that packets have been dropped or supressed. Then all packets are
+counted for each connection between the client and server. A mismatch would indicate that
+the polling or setting of a state has been dropped or suppressed. 
+
+The method does not utilize any statistical methods, which are
+the ones used for machine learning. Instead, exact matching is used to 
+perform several of the checks. As mentioned in Section \ref{sec:ids_theory}, this
+is often used in signature-based detection. The result is lower number of false positives, 
+which is a requirement when working with safety-critical systems. 
+
+\subsubsection{Limitations}
+
+- The parser uses currently uses files to perform detection, not live monitoring.
+- time-consuming method. Batch-collecting packets creates delays, 
+    but as long as they are no more than 4 minutes, is that ok?
+- correlate the correct packets between levels. do they have an id? time to live 
+    sequence number?
+
+TODO WEDNESDAY 3.5
+- prepare presentation
+- test if the collection can be done with two servers and one client
+- collect the level 1/2 datasets - daisychain the pollings
+- perform the possible tests
