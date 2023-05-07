@@ -8,6 +8,12 @@ import random
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger('asyncua')
 
+# Set the seed for the random number generator
+random.seed(42)
+# Generate an array of 300 values ranging between 50 and 65
+PRV1_array = [random.uniform(50, 65) for _ in range(300)]
+PRV2_array = [random.uniform(5, 7) for _ in range(300)]
+
 async def main():
     #--------------------------------------INIT--------------------------------------------
     # create server
@@ -48,7 +54,7 @@ async def main():
 #--------------------------------------------LARGE RELIEF SCENARIO------------------------------------
 
     print("PR relief scenario started")
-    f = open("./log_files/PRV_scenario.csv", "a")
+    f = open("./test_infrastucture/log_files/PRV_scenario_Level1.csv", "a")
     prv = 70
     i = 0
 
@@ -69,12 +75,15 @@ async def main():
                 prv = 0
                 ts_gas += 3
             else: 
-                prv = random.randint(50, 65)
+                prv = PRV1_array[i]
                 ts_gas -= 3
+
+            if lt <= 0:
+                lt = 0
 
 
             # end scenario when prv closed and tank is empty
-            if (prv == 0 and lt <= 0):
+            if (prv == 0 and lt <= 0 and i > 30):
                 lt = 0
                 rp = 0
 
@@ -82,21 +91,21 @@ async def main():
                 await rp_var.write_value(float(rp))
                 await ls_var.write_value(float(ls))
                 await bdv_var.write_value(float(bdv))
-                await prv_var.write_value(float(prv))
+                await prv_var.write_value(round(float(prv),2))
                 await ts_liquid_var.write_value(float(ts_liquid))
                 await ts_gas_var.write_value(float(ts_gas))
                 await drain_var.write_value(float(drain))
 
-                print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+                print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
                 f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
                 break
 
             # set server values
-            await lt_var.write_value(float(round(lt,2)))
+            await lt_var.write_value(round(float(lt),2))
             await rp_var.write_value(float(rp))
             await ls_var.write_value(float(ls))
             await bdv_var.write_value(float(bdv))
-            await prv_var.write_value(float(prv))
+            await prv_var.write_value(round(float(prv),2))
             await ts_liquid_var.write_value(float(ts_liquid))
             await ts_gas_var.write_value(float(ts_gas))
             await drain_var.write_value(float(drain))
@@ -122,7 +131,7 @@ async def main():
             if i >= 37:
                 prv = 0
             else: 
-                prv = random.randint(5, 7)
+                prv = PRV2_array[i]
 
             if lt >= 10:
                 if ts_liquid < 150:
@@ -157,11 +166,11 @@ async def main():
             
 
             # set server values
-            await lt_var.write_value(float(round(lt,2)))
+            await lt_var.write_value(round(float(lt),2))
             await rp_var.write_value(float(rp))
             await ls_var.write_value(float(ls))
             await bdv_var.write_value(float(bdv))
-            await prv_var.write_value(float(prv))
+            await prv_var.write_value(round(float(prv),2))
             await ts_liquid_var.write_value(float(ts_liquid))
             await ts_gas_var.write_value(float(ts_gas))
             await drain_var.write_value(float(drain))

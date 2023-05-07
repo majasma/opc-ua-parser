@@ -8,6 +8,12 @@ import random
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger('asyncua')
 
+# Set the seed for the random number generator
+random.seed(42)
+# Generate an array of 300 values ranging between 50 and 65
+temp1_array = [random.uniform(14, 16) for _ in range(300)]
+temp2_array = [random.uniform(14, 16) for _ in range(300)]
+
 async def main():
     #--------------------------------------INIT--------------------------------------------
     # create server
@@ -47,7 +53,7 @@ async def main():
 
 #--------------------------------------------SCENARIO START------------------------------------
     print("Unmasked attack scenario started")
-    f = open("test_scenarios/log_files/attack_real_scenario.csv", "a")
+    f = open("test_infrastucture/log_files/attack_real_scenario_.csv", "a")
     bdv = 1
     i = 0
    
@@ -68,11 +74,11 @@ async def main():
             else:
                 ls = 0
 
-            ts_gas = random.randint(14,16)
-            ts_liquid = random.randint(14,16)
+            ts_gas = temp1_array[i]
+            ts_liquid = temp2_array[i]
             
 
-            await lt_var.write_value(float(lt))
+            await lt_var.write_value(round(float(lt),2))
             await rp_var.write_value(float(0))
             await ls_var.write_value(float(ls))
             await bdv_var.write_value(float(0))

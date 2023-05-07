@@ -76,6 +76,7 @@ def main():
 
     #--------------------- CHECK PCAPS -------------------------
     control_communications(opc_packets, opc_packets)
+    print("------------------------------------------------")
 
 
     #-----------------------------------------------------------
@@ -85,11 +86,12 @@ def main():
     #print(df, df_copy)
     
     #--------------- RUN STATE COMPARISONS ----------------------
-    #compare_df(df, df_copy)
-    #control_features(df)
-
+    compare_df(df, df_copy)
+    print("-------------------------------------------------")
+    
 
     #------------------- FEATURE CHECKS -------------------------
+    control_features(df)
 
     return
 
