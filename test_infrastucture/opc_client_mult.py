@@ -10,8 +10,8 @@ logging.disable(logging.WARNING)
 
 #sjekk opp om rekkefølgen er irrelevant
 
-data_variables_1 = ["PRV", "Drain Valve", "Temperature liquids", "Temperature gas" ]
-data_variables_2 = ["Level Transmitter","Return Pumps","Level Switch", "BDV"]
+data_variables_2 = ["PRV", "Drain Valve", "Temperature liquids", "Temperature gas" ]
+data_variables_1 = ["Level Transmitter","Return Pumps","Level Switch", "BDV"]
 
 
 async def dict_format(keys, values):

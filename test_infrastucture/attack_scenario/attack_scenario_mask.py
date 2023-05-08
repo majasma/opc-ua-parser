@@ -12,8 +12,8 @@ _logger = logging.getLogger('asyncua')
 # Set the seed for the random number generator
 random.seed(42)
 # Generate an array of 300 values ranging between 50 and 65
-temp1_array = [random.uniform(14, 16) for _ in range(300)]
-temp2_array = [random.uniform(14, 16) for _ in range(300)]
+temp2_array = [random.uniform(23, 26) for _ in range(300)]
+temp1_array = [random.uniform(22, 25) for _ in range(300)]
 prv_array = [random.uniform(2, 3) for _ in range(300)]
 
 async def main():
@@ -68,17 +68,17 @@ async def main():
     sine_arr = (y + 2) * 4 / 4
 
     async with server:
-        while i <= 2.5*60:
+        while i <= 80:
             rp = 0
             
-            if i > 60 and i < 124:
+            if i > 30 and i < 60:
                 prv = prv_array[i]
                 lt = sine_arr[i]
             else: 
                 prv = 0
 
             
-            if i > 70 and lt >= 0:
+            if i > 33 and lt >= 0:
                 rp = 1
                 lt -= 1
 
@@ -98,7 +98,7 @@ async def main():
             await ts_gas_var.write_value(float(ts_liquid))
             await drain_var.write_value(float(drain))
 
-            print(i, "\t", "lt: ", float(lt), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+            print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "bdv: ", bdv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
             f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
             await asyncio.sleep(2) 

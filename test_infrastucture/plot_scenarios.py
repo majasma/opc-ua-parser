@@ -10,9 +10,6 @@ def plot_bdv(filename):
     df.columns = ['Level Transmitter', 'Return Pumps', 'Level Switch', 'BDV', 'PRV', 'Temperature Liquid', 'Temperature Gas', 'Drain' ]
     print(df)
 
-
-
-
     # Specify the font family and size
     plt.rc('font', family='serif', size=11)
 
@@ -25,10 +22,11 @@ def plot_bdv(filename):
     plt.xlabel('Time')
     
     
-    plt.axvline(x=10, color='black', linestyle='-', label='Drain on')
-    plt.axvline(x=18, color='purple', linestyle='-', label='BDV off')
-    plt.axvline(x=21, color='grey', linestyle='-', label='Drain off')
-    plt.axvline(x=18.1, color='orange', linestyle='-', label='LS off')
+    plt.axvline(x=5, color='purple', linestyle='-.', label='BDV on')
+    plt.axvline(x=6, color='red', linestyle='-.', label='LS/Drain on')
+    plt.axvline(x=23, color='purple', linestyle='--', label='BDV off')
+    plt.axvline(x=25, color='red', linestyle='--', label='LS off')
+    plt.axvline(x=27, color='orange', linestyle='--', label='Drain off')
 
     plt.title('BDV Scenario')
     plt.legend()
@@ -124,11 +122,9 @@ def plot_attack_real(filename, filename2):
 
 def main():
 
-    #plot_bdv("./test_infrastucture/log_files/BDV_scenario_Level1.csv")
+    plot_bdv("./test_infrastucture/log_files/BDV_scenario_Level1.csv")
     #plot_prv("./test_infrastucture/log_files/PRV_scenario_Level1.csv")
-    plot_attack_masked("./test_infrastucture/log_files/attack_scenario_masked_Level1.csv")
-
-
+    #plot_attack_masked("./test_infrastucture/log_files/attack_scenario_masked_Level1.csv")
     #plot_attack_real("./test_infrastucture/log_files/attack_scenario_Level0_1.csv", "./test_infrastucture/log_files/attack_scenario_Level0_2.csv")
 
 

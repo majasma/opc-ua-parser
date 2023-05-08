@@ -11,8 +11,10 @@ _logger = logging.getLogger('asyncua')
 # Set the seed for the random number generator
 random.seed(42)
 # Generate an array of 300 values ranging between 50 and 65
-temp1_array = [random.uniform(14, 16) for _ in range(300)]
-temp2_array = [random.uniform(14, 16) for _ in range(300)]
+temp1_array = [random.uniform(23, 26) for _ in range(300)]
+temp2_array = [random.uniform(22, 25) for _ in range(300)]
+bdv_arr = [random.uniform(6, 8) for _ in range(300)]
+temp_vol_array = [random.uniform(1, 2) for _ in range(300)]
 
 async def main():
     #--------------------------------------INIT--------------------------------------------
@@ -53,28 +55,31 @@ async def main():
 
 #--------------------------------------------SCENARIO START------------------------------------
     print("Unmasked attack scenario started")
-    f = open("test_infrastucture/log_files/attack_real_scenario_.csv", "a")
-    bdv = 1
+    f = open("test_infrastucture/log_files/attack_real_scenario_Level1.csv", "a")
     i = 0
    
     async with server:
-        while i < 2.5 * 60:
+        while i < 60:
+
+            if i < 30:
+                ts_gas = temp1_array[i]
 
             if i > 30:
-                lt += 4 * bdv
+                bdv = 1
+                lt += bdv_arr[i]
+                ts_gas =- temp_vol_array[i]
 
-            if i > 40 and i < 120:
-                ts_gas =- 5
-            
             if lt > 100:
                 lt = 100
 
-            if (lt >= 50): 
+            if (lt >= 10): 
                 ls = 1
             else:
                 ls = 0
 
-            ts_gas = temp1_array[i]
+            if ts_gas <= -25:
+                ts_gas = -temp1_array[i]
+
             ts_liquid = temp2_array[i]
             
 
@@ -88,10 +93,10 @@ async def main():
             await drain_var.write_value(float(0))
 
 
-            print(i, "\t", "lt: ", lt, "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
+            print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "bdv: ", bdv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
             f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(ts_liquid, 2)) + ", " + repr(round(ts_gas, 2)) + ", "+ repr(drain) +'\n') 
 
-            await asyncio.sleep(2) 
+            #await asyncio.sleep(2) 
             i += 1
 
         print("Unmasked attack scenario complete") 
