@@ -8,12 +8,15 @@ import logging
 # version_output = subprocess.check_output(parameters, stderr=null).decode("ascii") in tshark.py must therefore be changed to
 # version_output = subprocess.check_output(parameters, stderr=null).decode("utf-8")
 
-opcua_filter = '(tcp.port==4840 || tcp.port==4841) && (opcua.transport.type == "MSG") && (opcua.variant.ArraySize == 3 || opcua.Double ) && !( (frame.len >= 220) || (frame.len >= 500)) '
+opcua_filter = '(tcp.port==4840 || tcp.port==4841) && (opcua.transport.type == "MSG") && (opcua.variant.ArraySize == 3 || opcua.Double ) && !(frame.len >= 220) '
+
+# This filter removes all the Temperature Liquid readings
+opcua_filter2 = '(tcp.port==4840 || tcp.port==4841) && (opcua.transport.type == "MSG") && (opcua.variant.ArraySize == 3 || opcua.Double ) && !((frame.len == 192) || (frame.len >= 220) || (opcua.security.rqid == 18))'
 
 
 def pcap_to_opcua(filename, demo=0):
     #filters out to keep only translate requests and read responses
-    opc_packets = pyshark.FileCapture(filename, display_filter=opcua_filter)
+    opc_packets = pyshark.FileCapture(filename, display_filter=opcua_filter2)
     opc_packets.load_packets()
     num_packets = len(opc_packets)
     print(num_packets)
@@ -21,8 +24,7 @@ def pcap_to_opcua(filename, demo=0):
     df = pd.DataFrame(columns=["Level Transmitter","Return Pumps","Level Switch", "BDV", "PRV", "Drain Valve", "Temperature liquids", "Temperature gas"])
 
     if demo == 1:
-        print("Demo")
-
+        print('demo')
 
     last_col_idx = -1
     row_idx = 0
@@ -61,8 +63,7 @@ def pcap_to_opcua(filename, demo=0):
             # Insert a None value in the corresponding column
             df.at[row_idx, sensor_name] = np.nan
 
-            #TODO implement a test for this
-            logging.warning("%s Missing value, expected state update for %s", datetime.datetime.now().strftime("%H-%M-%S"), df.columns.get_loc(last_col_idx+1))
+            logging.warning("%s Missing value, expected state update for %s", datetime.datetime.now().strftime("%H-%M-%S"), df.columns[last_col_idx+1])
             
             # Update the last value of name seen
             last_col_idx = col_idx
@@ -106,18 +107,45 @@ def compare_df(df1, df2):
 
 def control_features(df):
 
-    for i in df.index:
-        if df['BDV'][i] == 1.0 and df['PRV'][i] == 0.0:
-            print('BDV open and PRV closed, check ESD status')
-            logging.warning("%s BDV open and PRV closed, check ESD status", datetime.datetime.now().strftime("%H-%M-%S"))
-        
-        if df['BDV'][i] == 1 and df['Drain Valve'][i] == 0.0 and df['Return Pumps'][i] == 0.0 and df['Level Transmitter'][i] >= 50:
-            logging.warning("%s BDV open while RP/drain closed and level high", datetime.datetime.now().strftime("%H-%M-%S"))
-            print('BDV open while RP/drain closed and level high')
+    count_1 = 0
+    count_2 = 0
+    count_3 = 0
 
-        if df['Level Transmitter'][i] >= 50.0 and df['Temperature gas'][i] <= 20.0:
-            logging.warning("%s Liquid filling but not large gas flow", datetime.datetime.now().strftime("%H-%M-%S"))
-            print('Liquid filling but not large gas flow')
+    for i in range(len(df.index)):
+
+        if float(df.loc[i]['BDV']) == 1.0 and float(df.loc[i]['PRV']) == 0.0:
+            count_1 += 1
+            if count_1 == 10:
+                logging.warning("%s BDV open and PRV closed, check ESD status", datetime.datetime.now().strftime("%H-%M-%S"))
+                count_1 = 0
+        
+        if float(df.loc[i]['BDV'] == 1) and df.loc[i]['Drain Valve'] == 0.0 and float(df.loc[i]['Return Pumps']) == 0.0 and float(df.loc[i]['Level Transmitter']) >= 50:
+            count_2 += 1
+            if count_2 == 10:
+                logging.warning("%s BDV open while RP/drain closed and level high", datetime.datetime.now().strftime("%H-%M-%S"))
+                count_2 = 0
+
+        if float(df.loc[i]['Level Transmitter']) >= 50.0 and float(df.loc[i]['Temperature gas']) <= 20.0:
+            count_3 += 1
+            if count_3 == 10:
+                logging.warning("%s Liquid filling but not large gas flow", datetime.datetime.now().strftime("%H-%M-%S"))
+                count_3 = 0
+
+    return
+
+def integrity_check(df1, df2):
+    print("-------------------------------------------------")
+    print("Check: Packet integrity between levels - STARTED")    
+    compare_df(df1, df2)
+    print("Check: Packet integrity between levels - COMPLETED")
+
+    return
+
+def content_check(df):
+    print("-------------------------------------------------")
+    print("Check: State analysis - STARTED")    
+    control_features(df)
+    print("Check: State analysis - COMPLETED")
 
     return
 
@@ -131,27 +159,16 @@ def main():
     logging.info("Started script")
 
     #------------------- PROCESS PCAPS -------------------------
-    #df = pcap_to_state('pcaps/BDV_scenario_Level1.pcapng')
-    df1 = pcap_to_opcua('../pcaps/PRV_Level1.pcapng', opcua_filter)
-    df2 = pcap_to_opcua('../pcaps/PRV_Level0.pcapng', opcua_filter)
+    print("Processing pcap files - STARTED")
+    df1 = pcap_to_opcua('../pcaps/BDV_Level1.pcapng', 1)
+    #df2 = pcap_to_opcua('../pcaps/PRV_Level0.pcapng', opcua_filter)
+    print("Processing pcap files - COMPLETED")
 
     #print("------------------ PACKAGE LOSS DEMO ----------------")
     #df1 = pcap_to_opcua('./pcaps/BDV_Level1.pcapng')
     
-
-    print("------------------ PACKAGE CAPTURE INTEGRITY ----------------")
-    # TODO - remove, only for dev
-    #df_copy = df.copy()
-    #df_copy.iat[1, 1] = 10.0
-    #print(df, df_copy)
-    
-    #print("--------------- RUN STATE COMPARISONS ----------------------")
-    compare_df(df1, df2)
-    #print("-------------------------------------------------")
-    
-
-    #------------------- FEATURE CHECKS -------------------------
-    #control_features(df)
+    #integrity_check(df1, df2)
+    #content_check(df1)
 
     return
 
@@ -159,41 +176,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-# 1 Process pcaps
-#  1.1 load files                            - DONE
-#  1.2 remove tcp/ip header                  - problems
-#  1.3 parse opcua protocol                  - DONE
-#  1.4 copy state values to separate dataset - DONE
-
-# 2 Compare PCAPs
-#  2.1 compare number of polls               - DONE
-#  2.2 compare number of messages per poll   - IF THIS IS NOT TRUE, I THINK THE CODE WILL CRASH: problems 
-#  2.3 compare values of states              - DONE
-
-# 3 Check selected feature conditions
-#  3.1 iterate dataset                       - DONE
-#  3.2 check conditions                      - STARTED
-
-#-------------------------- PROB NOT GOING TO NEED THIS ---------------------------------------
-def pcap_to_state(filename):
-    opc_read_response = pyshark.FileCapture(filename, display_filter='opcua.transport.type == "MSG" && ( opcua.Double  || opcua.Boolean)')
-    opc_read_response.load_packets()
-    
-    
-    num_packets = len(opc_read_response)
-    
-    data_arr = []
-    for pkt in opc_read_response:
-        data_arr.append(float(pkt.opcua.double))
-
-    df = pd.DataFrame(columns=["Level Transmitter","Return Pumps","Level Switch", "BDV", "PRV", "Drain Valve", "Temperature liquids", "Temperature gas"])
-
-    # only under dev: make the array divisible by 8 by cutting excess
-    num_elements = len(data_arr) - (len(data_arr) % 8)
-    data_arr = data_arr[:num_elements]
-
-
-    for i in range(0, num_packets, 8):
-        df.loc[i//8] = data_arr[i:i+8]
-
-    return df

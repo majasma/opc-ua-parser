@@ -73,7 +73,7 @@ async def main():
             await lt_var.write_value(round(float(lt),2))
             await rp_var.write_value(float(0))
             await ls_var.write_value(float(ls))
-            await bdv_var.write_value(float(0))
+            await bdv_var.write_value(float(bdv))
 
 
             print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "bdv: ", bdv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
