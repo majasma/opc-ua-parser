@@ -3,7 +3,7 @@
 **Contact information:** Maja Simons Markusson, maja.markusson@gmail.com <br />
 **Licensing:** This dataset is dedicated to the public domain.
 
-This dataset was created to test an OPC-UA parser implemented in a master thesis project. It contains six packet capture next-generation files with OPC-UA traffic. The traffic is captured on the loopback interface using Wireshark. The state_references folder contains ten csv files with state references for the different nodes. The source code used to create the dataset and directions on how to do it is hosted on https://github.com/majasma/opc-ua-parser.
+This dataset was created to test an OPC-UA parser implemented in a master thesis project. It contains six packet capture next-generation files with OPC-UA traffic simulating the communications between sensors, a PLC and an HMI in a flare system. The flare system is described by a case study, and all data is therefore synthetic, modeled from the authors best knowledge. The traffic is captured on the loopback interface using Wireshark. The state_references folder contains ten csv files with state references for the different nodes. The source code used to create the dataset and directions on how to do it is hosted on https://github.com/majasma/opc-ua-parser.
 
 ## Method:
 
