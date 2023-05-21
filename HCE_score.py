@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 
 def HCE_impact_points( beta, delta, gamma,epsilon, D, S, C, E):
     return (beta*D)+(delta*S)+(gamma*C)+(epsilon*E)
@@ -63,9 +64,15 @@ if __name__ == "__main__":
     df['Cost']=df['Cost'].astype(float) 
     df['Environment']=df['Environment'].astype(float) 
 
+    mpl.rcParams['font.family'] = 'serif'
+
     # plot data in stack manner of bar type
-    df.plot(x= 'HCE', kind='bar', stacked=True,
-            title='HCE Severity Score Composition', rot=0)
+    ax = df.plot(x= 'HCE', kind='bar', stacked=True, rot=0)
+    font = {'family': 'serif', 'size': 11}
+    #plt.rc('font', family='serif', size=11)
+    ax.set_title('HCE Severity Score Composition', fontdict=font)
+    ax.set_ylabel('Severity Score', fontdict=font)
+
     plt.show()
     
     

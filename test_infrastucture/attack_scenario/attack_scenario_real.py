@@ -59,7 +59,7 @@ async def main():
     i = 0
    
     async with server:
-        while i < 60:
+        while i < 80:
 
             if i < 30:
                 ts_gas = temp1_array[i]

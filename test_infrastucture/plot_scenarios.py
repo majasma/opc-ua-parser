@@ -13,23 +13,40 @@ def plot_bdv(filename):
     # Specify the font family and size
     plt.rc('font', family='serif', size=11)
 
-    #axs[0].plot(y=df['Level Transmitter','Temperature Gas', 'Temperature Liquid'])
-    plt.plot(df['Level Transmitter'], label='Level Transmitter, % of capcity', color='tab:blue')
-    plt.plot(df['Temperature Gas'], label='Gas Temp Sensor, C', color='tab:red')
-    plt.plot(df['Temperature Liquid'], label='Liquid Temp Sensor, C', color='tab:green')
-    plt.plot(df['PRV'], label='PRV, % of capcity', color='tab:pink')
+    plots = {
+    'Level Transmitter, % of capcity': plt.plot(df['Level Transmitter'], color='tab:blue')[0],
+    'Gas Temp Sensor, \u00b0C': plt.plot(df['Temperature Gas'], color='tab:red')[0],
+    'Liquid Temp Sensor, \u00b0C': plt.plot(df['Temperature Liquid'], color='tab:green')[0],
+    'PRV, % of capcity': plt.plot(df['PRV'], color='tab:pink')[0],
+    }
 
     plt.xlabel('Time')
+
+    lines = {
+    'BDV on': plt.axvline(x=4, color='purple', linestyle='-'),
+    'LS/Drain on': plt.axvline(x=5, color='orange', linestyle='-'),
+    'LS/Drain on': plt.axvline(x=12, color='orange', linestyle='-'),
+    'LS/Drain on': plt.axvline(x=20, color='orange', linestyle='-'),
+    'BDV off': plt.axvline(x=23, color='purple', linestyle='--'),
+    'Drain off': plt.axvline(x=11, color='orange', linestyle='--'),
+    'Drain off': plt.axvline(x=18, color='orange', linestyle='--'),
+    'Drain off': plt.axvline(x=24, color='orange', linestyle='--'),
+    }
+
+    unique_labels = {}
+    for label, line in lines.items():
+        if label not in unique_labels:
+            unique_labels[label] = line
+
+    for label, plot in plots.items():
+        if label not in unique_labels:
+            unique_labels[label] = plot
+
+    plt.legend(unique_labels.values(), unique_labels.keys())
     
-    
-    plt.axvline(x=5, color='purple', linestyle='-.', label='BDV on')
-    plt.axvline(x=6, color='red', linestyle='-.', label='LS/Drain on')
-    plt.axvline(x=23, color='purple', linestyle='--', label='BDV off')
-    plt.axvline(x=25, color='red', linestyle='--', label='LS off')
-    plt.axvline(x=27, color='orange', linestyle='--', label='Drain off')
 
     plt.title('BDV Scenario')
-    plt.legend()
+
 
     # Show the plot
     plt.show()
@@ -42,20 +59,37 @@ def plot_prv(filename):
     print(df)
     plt.rc('font', family='serif', size=11)
 
-    #axs[0].plot(y=df['Level Transmitter','Temperature Gas', 'Temperature Liquid'])
-    plt.plot(df['Level Transmitter'], label='Level Transmitter, % of capcity', color='tab:blue')
-    plt.plot(df['Temperature Gas'], label='Temperature Gas, \u00b0C', color='tab:red')
-    plt.plot(df['Temperature Liquid'], label='Temperature Liquid, \u00b0C', color='tab:green')
-    plt.plot(df['PRV'], label='PRV, % of capcity', color='tab:pink')
+    plots = {
+    'Level Transmitter, % of capcity': plt.plot(df['Level Transmitter'], color='tab:blue')[0],
+    'Gas Temp Sensor, \u00b0C': plt.plot(df['Temperature Gas'], color='tab:red')[0],
+    'Liquid Temp Sensor, \u00b0C': plt.plot(df['Temperature Liquid'], color='tab:green')[0],
+    'PRV, % of capcity': plt.plot(df['PRV'], color='tab:pink')[0],
+    }
 
-    plt.axvline(x=6, color='orange', linestyle='-', label='RP on')
-    plt.axvline(x=30, color='indigo', linestyle='-', label='RP off')
-    plt.axvline(x=6.1, color='yellow', linestyle='-', label='LS on')
-    plt.axvline(x=8, color='grey', linestyle='-', label='LS off')
+    plt.xlabel('Time')
+
+    lines = {
+    'LS/RP on': plt.axvline(x=0, color='orange', linestyle='-'),
+    'LS/RP on': plt.axvline(x=48, color='orange', linestyle='-'),
+    'LS off': plt.axvline(x=22, color='orange', linestyle='--'),
+    'LS off': plt.axvline(x=49, color='orange', linestyle='--'),
+    'RP off': plt.axvline(x=27, color='Purple', linestyle='--'),
+    'RP off': plt.axvline(x=57, color='Purple', linestyle='--')
+    }
+
+    unique_labels = {}
+    for label, line in lines.items():
+        if label not in unique_labels:
+            unique_labels[label] = line
+
+    for label, plot in plots.items():
+        if label not in unique_labels:
+            unique_labels[label] = plot
 
     plt.title("PRV Scenario")
     plt.xlabel('Time')
-    plt.legend()
+
+    plt.legend(unique_labels.values(), unique_labels.keys())
 
 
     # Show the plot
@@ -70,19 +104,35 @@ def plot_attack_masked(filename):
     plt.rc('font', family='serif', size=11)
 
 
+    plots = {
+    'Level Transmitter, % of capcity': plt.plot(df['Level Transmitter'], color='tab:blue')[0],
+    'Gas Temp Sensor, \u00b0C': plt.plot(df['Temperature Gas'], color='tab:red')[0],
+    'Liquid Temp Sensor, \u00b0C': plt.plot(df['Temperature Liquid'], color='tab:green')[0],
+    'PRV, % of capcity': plt.plot(df['PRV'], color='tab:pink')[0],
+    }
 
-    #axs[0].plot(y=df['Level Transmitter','Temperature Gas', 'Temperature Liquid'])
-    plt.plot(df['Level Transmitter'], label='Level Transmitter', color='tab:blue')
-    plt.plot(df['Temperature Gas'], label='Temperature Gas', color='tab:red')
-    plt.plot(df['Temperature Liquid'], label='Temperature Liquid', color='tab:green')
-    plt.plot(df['PRV'], label='PRV', color='tab:pink')
+    plt.xlabel('Time')
 
-    plt.axvline(x=70, color='orange', linestyle='-', label='RP on')
-    plt.axvline(x=123, color='indigo', linestyle='-', label='RP off')
+    lines = {
+    'LS/RP on': plt.axvline(x=30, color='orange', linestyle='-'),
+    'LS off': plt.axvline(x=33, color='orange', linestyle='--'),
+    'RP off': plt.axvline(x=61, color='Purple', linestyle='--')
+    }
+
+    unique_labels = {}
+    for label, line in lines.items():
+        if label not in unique_labels:
+            unique_labels[label] = line
+
+    for label, plot in plots.items():
+        if label not in unique_labels:
+            unique_labels[label] = plot
+
+
 
 
     plt.xlabel('Time')
-    plt.legend()
+    plt.legend(unique_labels.values(), unique_labels.keys())
 
     
 
@@ -91,30 +141,42 @@ def plot_attack_masked(filename):
     plt.show()
 
 
-def plot_attack_real(filename, filename2):
+def plot_attack_real(filename):
 
-    # Read CSV file into a DataFrame
-    df1 = pd.read_csv(filename, header=0)
-    df1.columns = ['PRV', 'Temperature Liquid', 'Temperature Gas', 'Drain' ]
-
-    df2 = pd.read_csv(filename2, header=0)
-    df2.columns = ['Level Transmitter', 'Return Pumps', 'Level Switch', 'BDV']
-    print(df1)
-    print(df2) 
-
-
-    #axs[0].plot(y=df['Level Transmitter','Temperature Gas', 'Temperature Liquid'])
-    plt.plot(df2['Level Transmitter'], label='Level Transmitter, % of capcity', color='tab:blue')
-    plt.plot(df1['Temperature Gas'], label='Temperature Gas, \u00b0C', color='tab:red')
-    plt.plot(df1['Temperature Liquid'], label='Temperature Liquid, \u00b0C', color='tab:green')
-    plt.plot(df1['PRV'], label='PRV, % of capcity', color='tab:pink')
-
-    plt.axvline(x=0, color='purple', linestyle='-', label='BDV on')
-    plt.axvline(x=6.1, color='orange', linestyle='-', label='LS on')
+        # Read CSV file into a DataFrame
+    df = pd.read_csv(filename, header=0)
+    df.columns = ['Level Transmitter', 'Return Pumps', 'Level Switch', 'BDV', 'PRV', 'Temperature Liquid', 'Temperature Gas', 'Drain' ]
+    print(df)
     plt.rc('font', family='serif', size=11)
+
+
+    plots = {
+    'Level Transmitter, % of capcity': plt.plot(df['Level Transmitter'], color='tab:blue')[0],
+    'Gas Temp Sensor, \u00b0C': plt.plot(df['Temperature Gas'], color='tab:red')[0],
+    'Liquid Temp Sensor, \u00b0C': plt.plot(df['Temperature Liquid'], color='tab:green')[0],
+    'PRV, % of capcity': plt.plot(df['PRV'], color='tab:pink')[0],
+    }
+
     plt.xlabel('Time')
+
+    lines = {
+    'BDV on': plt.axvline(x=29, color='orange', linestyle='-'),
+    'LS on': plt.axvline(x=30, color='Purple', linestyle='-')
+    }
+
+    unique_labels = {}
+    for label, line in lines.items():
+        if label not in unique_labels:
+            unique_labels[label] = line
+
+    for label, plot in plots.items():
+        if label not in unique_labels:
+            unique_labels[label] = plot
+
+
+    plt.xlabel('Time')
+    plt.legend(unique_labels.values(), unique_labels.keys())
     plt.title("Real Attack Scenario")
-    plt.legend()
 
     # Show the plot
     plt.show()
@@ -122,10 +184,10 @@ def plot_attack_real(filename, filename2):
 
 def main():
 
-    plot_bdv("./test_infrastucture/log_files/BDV_scenario_Level1.csv")
+    #plot_bdv("./test_infrastucture/log_files/BDV_scenario_Level1.csv")
     #plot_prv("./test_infrastucture/log_files/PRV_scenario_Level1.csv")
     #plot_attack_masked("./test_infrastucture/log_files/attack_scenario_masked_Level1.csv")
-    #plot_attack_real("./test_infrastucture/log_files/attack_scenario_Level0_1.csv", "./test_infrastucture/log_files/attack_scenario_Level0_2.csv")
+    plot_attack_real("./test_infrastucture/log_files/attack_real_scenario_Level1.csv")
 
 
     return

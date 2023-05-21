@@ -80,7 +80,6 @@ async def main():
             else: 
                 prv = PRV1_array[i]
                 ts_gas -= 3
-                ls = 0
 
             if ts_gas >= 23:
                 ts_gas = temp2_array[i]
@@ -121,7 +120,7 @@ async def main():
             print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
             f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(float(temp1_array[i]),2)) + ", " + repr(round(float(temp2_array[i]),2)) + ", "+ repr(drain) +'\n') 
 
-            await asyncio.sleep(2)
+            #await asyncio.sleep(2)
             i += 1
 
         print("Large relief scenario complete")    
@@ -188,7 +187,7 @@ async def main():
             print(i, "\t", "lt: ", round(lt,2), "prv: ", prv, "ls: ", ls, "rp: ", rp, "temp liquids: ", ts_liquid, "temp gas: ", ts_gas , "drain valve: ", drain)
             f.write(repr(round(lt,2)) + ", " + repr(rp) + ", " + repr(ls) + ", " + repr(bdv) + ", " + repr(prv) + ", " + repr(round(float(temp1_array[i]),2)) + ", " + repr(round(float(temp2_array[i]),2)) + ", "+ repr(drain) +'\n') 
 
-            await asyncio.sleep(2)
+            #await asyncio.sleep(2)
             i += 1
 
         print("Small relief scenario complete")
